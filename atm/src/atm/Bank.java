@@ -12,11 +12,14 @@ public class Bank {
 	private Random ran;
 	
 	private int count;
+	private int log;
+	private int select;
 	
 	// Banking 관련 메소드
 	
 	public Bank() {
 		this.scan = new Scanner(System.in);
+		this.log = -1;
 	}
 	
 	private void printMenu() {
@@ -30,7 +33,7 @@ public class Bank {
 	
 	private void selectMenu() {
 		System.out.print("메뉴 : ");
-		int select = scan.nextInt();
+		select = scan.nextInt();
 	}
 	
 	private void join() {
@@ -40,8 +43,16 @@ public class Bank {
 		String joinPw = scan.next();
 		
 		if(!isDuplId(joinId)) {
-			User user = new User(joinId);
-			UserManager.addUser(user);
+			System.out.print("이름 : ");
+			String joinName = scan.next();
+			
+			User user = new User(joinId, joinPw, joinName, null);
+			this.um.addUser(user);
+			
+			this.count++;
+		}
+		else {
+			System.out.println("쭝복된 아이디입니다.");
 		}
 	}
 	
@@ -56,6 +67,28 @@ public class Bank {
 		return dupl;
 	}
 	
-	public void run() {}
+	private void login() {
+		System.out.print("로그인 ID : ");
+		String loginId = scan.next();
+		System.out.print("로그인 PW : ");
+		String loginPw = scan.next();
+		
+		for (int i = 0; i < this.count; i++) {
+//			User user = user.getId();
+			if (user.getId().equals(loginPw)) {
+				
+			}
+		}
+	}
+	
+	public void run() {
+		while (true) {
+			printMenu();
+			selectMenu();
+			if (select == 1) {
+				join();
+			}
+		}
+	}
 	
 }
