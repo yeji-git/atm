@@ -101,7 +101,7 @@ public class Bank {
 				}
 				else {
 					String account = am.getAccount(log).getAccNum();
-					account = Integer.toString(rNum);
+					account S= Integer.toString(rNum);
 					break;
 				}
 			}
@@ -112,8 +112,8 @@ public class Bank {
 	
 	private void accReave() {
 		for (int i = 0; i < 3; i++) {
-			Account aacount = 
-			System.out.println(i + );
+			Account aacount = am.getAccount(log).getAccNum(i);
+			System.out.println(i + ". " + account.);
 		}
 	}
 	
