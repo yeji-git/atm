@@ -11,6 +11,8 @@ public class Bank {
 	private Scanner scan;
 	private Random ran;
 	
+	private int count;
+	
 	// Banking 관련 메소드
 	
 	public Bank() {
@@ -36,6 +38,22 @@ public class Bank {
 		String joinId = scan.next();
 		System.out.print("회원가입 PW : ");
 		String joinPw = scan.next();
+		
+		if(!isDuplId(joinId)) {
+			User user = new User(joinId);
+			UserManager.addUser(user);
+		}
+	}
+	
+	private boolean isDuplId(String joinId) {
+		boolean dupl = false;
+		for (int i = 0; i < this.count; i++) {
+			User user = this.um.getUserById(joinId);
+			if (user.getId().equals(joinId)) {
+				dupl = true;
+			}
+		}
+		return dupl;
 	}
 	
 	public void run() {}
