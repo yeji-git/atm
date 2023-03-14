@@ -15,7 +15,7 @@ public class AccountManager {
 	public Account getAccount(int index) {
 		Account account = list.get(index);
 		
-		Account reqObj = new Account();
+		Account reqObj = new Account(account.getUserId(), account.getAccNum(), account.getMoney());
 		return reqObj;
 	}
 	
@@ -27,6 +27,10 @@ public class AccountManager {
 	// Delete
 	public void deleteAccount(int index) {
 		list.remove(index);
+	}
+	
+	public ArrayList<Account> getList() {
+		return list;
 	}
 
 }

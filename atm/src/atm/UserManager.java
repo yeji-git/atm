@@ -15,7 +15,7 @@ public class UserManager {
 	public User getUser(int index) {
 		User user = list.get(index);
 		
-		User reqObj = new User(user.getId(), user.getPassword(), user.getName(), user.getAccs());
+		User reqObj = new User(user.getId(), user.getPassword(), user.getName());
 		return reqObj;
 	}
 	public User getUserById(String id) {
@@ -31,6 +31,10 @@ public class UserManager {
 	// Delete
 	public void deleteUser(int index) {
 		list.remove(index);
+	}
+	
+	public ArrayList<User> getList() {
+		return list;
 	}
 	
 }

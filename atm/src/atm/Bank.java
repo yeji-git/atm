@@ -1,5 +1,6 @@
 package atm;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -11,13 +12,14 @@ public class Bank {
 	private Scanner scan;
 	private Random ran;
 	
-	private int count;
 	private int log;
 	private int select;
 	
 	// Banking 관련 메소드
 	
 	public Bank() {
+		um = new UserManager();
+		am = new AccountManager();
 		this.scan = new Scanner(System.in);
 		this.log = -1;
 	}
@@ -46,10 +48,10 @@ public class Bank {
 			System.out.print("이름 : ");
 			String joinName = scan.next();
 			
-			User user = new User(joinId, joinPw, joinName, null);
-			this.um.addUser(user);
+			User user = new User(joinId, joinPw, joinName);
+			um.addUser(user);
 			
-			this.count++;
+			System.out.println("회원가입 완료!");
 		}
 		else {
 			System.out.println("쭝복된 아이디입니다.");
@@ -58,9 +60,9 @@ public class Bank {
 	
 	private boolean isDuplId(String joinId) {
 		boolean dupl = false;
-		for (int i = 0; i < this.count; i++) {
-			User user = this.um.getUserById(joinId);
-			if (user.getId().equals(joinId)) {
+		for (int i = 0; i < um.getList().size(); i++) {
+			ArrayList<User> user = um.getList();
+			if (user.get(i).equals(joinId)) {
 				dupl = true;
 			}
 		}
@@ -73,8 +75,8 @@ public class Bank {
 		System.out.print("로그인 PW : ");
 		String loginPw = scan.next();
 		
-		for (int i = 0; i < this.count; i++) {
-//			User user = user.getId();
+		for (int i = 0; i < um.getList().size(); i++) {
+			User user = user.getList;
 			if (user.getId().equals(loginPw)) {
 				
 			}
