@@ -36,5 +36,5 @@ public class UserManager {
 	public ArrayList<User> getList() {
 		return list;
 	}
-	
+		
 }

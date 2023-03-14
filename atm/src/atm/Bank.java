@@ -21,6 +21,7 @@ public class Bank {
 		um = new UserManager();
 		am = new AccountManager();
 		this.scan = new Scanner(System.in);
+		this.ran = new Random();
 		this.log = -1;
 	}
 	
@@ -62,7 +63,7 @@ public class Bank {
 		boolean dupl = false;
 		for (int i = 0; i < um.getList().size(); i++) {
 			ArrayList<User> user = um.getList();
-			if (user.get(i).equals(joinId)) {
+			if (user.get(i).getId().equals(joinId)) {
 				dupl = true;
 			}
 		}
@@ -76,12 +77,52 @@ public class Bank {
 		String loginPw = scan.next();
 		
 		for (int i = 0; i < um.getList().size(); i++) {
-			User user = user.getList;
-			if (user.getId().equals(loginPw)) {
-				
+			ArrayList<User> user = um.getList();
+			if (loginId.equals(user.get(i).getId()) && loginPw.equals(user.get(i).getPassword())) {
+				log = i;
 			}
 		}
+		
+		if (log != -1) {
+			System.out.println("로그인 성공!");
+		}
+		else {
+			System.out.println("로그인 실패");
+		}
 	}
+	
+	private void accJoin() {
+		while (true) {
+			int rNum = ran.nextInt(8999) +1000;
+			
+			for (int i = 0; i < am.getList().size(); i++) {
+				if (rNum == Integer.parseInt(am.getList().get(i).getAccNum())) {
+					i--;
+				}
+				else {
+					String account = am.getAccount(log).getAccNum();
+					account = Integer.toString(rNum);
+					break;
+				}
+			}
+		}
+		System.out.println("계좌 개설 성공!");
+		System.out.println("계좌번호는 " + am.getAccount(log).getAccNum() + " 입니다.");
+	}
+	
+	private void accReave() {
+		for (int i = 0; i < 3; i++) {
+			Account aacount = 
+			System.out.println(i + );
+		}
+	}
+	
+	private void logout() {
+		log = -1;
+		System.out.println("로그아웃되었습니다.");
+	}
+	
+	private void reave() {}
 	
 	public void run() {
 		while (true) {
@@ -89,6 +130,21 @@ public class Bank {
 			selectMenu();
 			if (select == 1) {
 				join();
+			}
+			else if (select == 2) {
+				login();
+			}
+			else if (select == 3) {
+				accJoin();
+			}
+			else if (select == 4) {
+				accReave();
+			}
+			else if (select == 5) {
+				logout();
+			}
+			else if (select == 6) {
+				leave();
 			}
 		}
 	}
