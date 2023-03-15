@@ -58,54 +58,88 @@ public class Bank {
 	private void bankDeposit() {
 		System.out.println("--- 입금 ---");
 		User user = this.um.getUser(log);
-		for (int i = 0; i < user.getAccountSize(); i++) {
-			System.out.printf("[%d. %s]\n", i, am.getAccount(i).getAccNum());
-		}
-		System.out.println("[입금하실 계좌를 선택해 주세요.]");
-		int depositAcc = scan.nextInt();
+		if (user.getAccountSize() > 0) {
+			for (int i = 0; i < user.getAccountSize(); i++) {
+				System.out.printf("[%d. %s]\n", i, am.getAccount(i).getAccNum());
+			}
+			System.out.println("[입금하실 계좌를 선택해 주세요.]");
+			int depositAcc = scan.nextInt();
 
-		System.out.println("[입금하실 금액을 입력해 주세요.]");
-		int depositMoney = scan.nextInt();
+			System.out.println("[입금하실 금액을 입력해 주세요.]");
+			int depositMoney = scan.nextInt();
 
-		if (depositMoney > 0) {
-			if (user.getAccountSize() != 0) {
+			if (depositMoney > 0) {
 				Account account = this.am.getAccount(depositAcc);
 				account.setMoney(depositMoney);
 				System.out.println("[입금되었습니다.]");
 			} else {
-				System.out.println("[계좌를 먼저 생성해 주세요.]");
+				System.out.println("[금액을 확인해 주세요.]");
 			}
 		} else {
-			System.out.println("[금액을 확인해 주세요.]");
+			System.out.println("[계좌를 먼저 생성해 주세요.]");
 		}
 	}
 
 	private void bankWithdraw() {
 		System.out.println("--- 출금 ---");
 		User user = this.um.getUser(log);
-		for (int i = 0; i < user.getAccountSize(); i++) {
-			System.out.printf("[%d. %s]\n", i, am.getAccount(i).getAccNum());
-		}
-		System.out.println("[출금하실 계좌를 선택해 주세요.]");
-		int withdrawAcc = scan.nextInt();
-		
-		System.out.println("[출금하실 금액을 입력해 주세요.]");
-		int withdrawMoney = scan.nextInt();
-		
-		if (withdrawMoney > 0 && withdrawMoney <= am.getAccount(withdrawAcc).getMoney()) {
-			Account account = this.am.getAccount(withdrawAcc);
-			account.setMoney(-withdrawMoney);
-			System.out.println("[출금되었습니다.]");
+		if (user.getAccountSize() > 0) {
+			for (int i = 0; i < user.getAccountSize(); i++) {
+				System.out.printf("[%d. %s]\n", i, am.getAccount(i).getAccNum());
+			}
+			System.out.println("[출금하실 계좌를 선택해 주세요.]");
+			int withdrawAcc = scan.nextInt();
+	
+			System.out.println("[출금하실 금액을 입력해 주세요.]");
+			int withdrawMoney = scan.nextInt();
+	
+			if (withdrawMoney > 0 && withdrawMoney <= am.getAccount(withdrawAcc).getMoney()) {
+				Account account = this.am.getAccount(withdrawAcc);
+				account.setMoney(-withdrawMoney);
+				System.out.println("[출금되었습니다.]");
+			} else {
+				System.out.println("[잔액이 부족합니다.]");
+			}
 		} else {
-			System.out.println("[잔액이 부족합니다.]");
+			System.out.println("[계좌를 먼저 생성해 주세요.]");
 		}
 	}
 
 	private void bankInformation() {
 		System.out.println("--- 조회 ---");
+		User user = this.um.getUser(log);
+		if (user.getAccountSize() > 0) {
+			for (int i = 0; i < user.getAccountSize(); i++) {
+				System.out.printf("[%d. %s %d원]\n", i, am.getAccount(i).getAccNum(), am.getAccount(i).getMoney());
+			}			
+		} else {
+			System.out.println("[계좌를 먼저 생성해 주세요.]");
+		}
 	}
 
 	private void bankTransfer() {
+		System.out.println("--- 이체 ---");
+		User user = this.um.getUser(log);
+		if (user.getAccountSize() > 0) {
+			for (int i = 0; i < user.getAccountSize(); i++) {
+				System.out.printf("[%d. %s]\n", i, am.getAccount(i).getAccNum());
+			}
+			System.out.println("[이체하실 계좌를 선택해 주세요.]");
+			int withdrawAcc = scan.nextInt();
+	
+			System.out.println("[이체하실 금액을 입력해 주세요.]");
+			int withdrawMoney = scan.nextInt();
+	
+			if (withdrawMoney > 0 && withdrawMoney <= am.getAccount(withdrawAcc).getMoney()) {
+				Account account = this.am.getAccount(withdrawAcc);
+				account.setMoney(-withdrawMoney);
+				System.out.println("[이체되었습니다.]");
+			} else {
+				System.out.println("[잔액이 부족합니다.]");
+			}
+		} else {
+			System.out.println("[계좌를 먼저 생성해 주세요.]");
+		}
 	}
 
 	private void printSubMenu() {
@@ -178,7 +212,7 @@ public class Bank {
 		System.out.println("--- 계좌신청 ---");
 		if (isLoggedIn()) {
 			User user = this.um.getUser(log);
-	
+
 			if (user.getAccountSize() < Account.LIMIT) {
 				String id = user.getId();
 				Account account = this.am.createAccount(new Account(id));
@@ -187,8 +221,7 @@ public class Bank {
 			} else {
 				System.out.println("[계좌 갯수가 초과되었습니다.]");
 			}
-		}
-		else {
+		} else {
 			System.out.println("[로그인이 되어 있지 않습니다.]");
 		}
 	}
@@ -197,7 +230,7 @@ public class Bank {
 		System.out.println("--- 계좌철회 ---");
 		if (isLoggedIn()) {
 			User user = this.um.getUser(log);
-	
+
 			for (int i = 0; i < user.getAccountSize(); i++) {
 				System.out.printf("[%d. %s]\n", i, this.am.getAccount(i).getAccNum());
 			}
