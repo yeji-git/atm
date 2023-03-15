@@ -3,7 +3,7 @@ package atm;
 import java.util.Scanner;
 
 public class Bank {
-
+	
 	private String brandName;
 
 	private UserManager um;
@@ -32,7 +32,7 @@ public class Bank {
 		System.out.println("0. 종료");
 		System.out.println("-----------------");
 	}
-	
+
 	private void printSubMenu() {
 		System.out.println("1. 입금하기");
 		System.out.println("2. 출금하기");
@@ -40,8 +40,6 @@ public class Bank {
 		System.out.println("4. 이체하기");
 		System.out.println("5. 뒤로가기");
 	}
-	
-	
 
 	private boolean isLoggedIn() {
 		if (log != -1) {
@@ -76,7 +74,7 @@ public class Bank {
 
 			User user = new User(id, password, name);
 			if (this.um.addUser(user) != null) {
-				System.out.println("[회원가입 성공]");
+				System.out.println("[회원가입이 되었습니다.]");
 			} else {
 				System.out.println("[중복된 아이디가 존재합니다.]");
 			}
@@ -111,9 +109,10 @@ public class Bank {
 			if (user.getPassword().equals(password)) {
 				if (user.getAccountSize() < Account.LIMIT) {
 					Account account = this.am.createAccount(new Account(id));
-					this.um.setUser(user, account);
+					this.um.setUser(user, account, Account.ADD);
+					System.out.println("[계좌 생성이 완료되었습니다.]");
 				} else {
-					System.out.println("[계좌가 초과되었습니다.]");
+					System.out.println("[계좌 갯수가 초과되었습니다.]");
 				}
 			} else {
 				System.out.println("[비밀번호가 일치하지 않습니다.]");
@@ -139,6 +138,8 @@ public class Bank {
 				System.out.println("[철회할 계좌를 선택해 주세요.]");
 				int deleteNumber = scan.nextInt();
 				am.deleteAccount(deleteNumber);
+				Account delAcc = user.getAccount(deleteNumber);
+				this.um.setUser(user, delAcc, Account.DELETE);
 				System.out.println("[철회가 완료되었습니다.]");
 			} else {
 				System.out.println("[비밀번호가 일치하지 않습니다.]");

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class UserManager {
 
 	private static ArrayList<User> list = new ArrayList<User>();
-
+	
 	// Create
 	public User addUser(User user) {
 		// °ËÁõ ÈÄ add
@@ -49,10 +49,15 @@ public class UserManager {
 		list.set(index, user);
 	}
 
-	public void setUser(User user, Account account) {
+	public void setUser(User user, Account account, int order) {
 		int index = indexOfById(user.getId());
 
-		list.get(index).addAccount(account);
+		if (order == Account.ADD) {
+			list.get(index).addAccount(account);
+		}
+		else if (order == Account.DELETE) {
+			list.get(index).deleteAccount(account);
+		}
 	}
 
 	// Delete
