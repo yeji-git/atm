@@ -5,148 +5,198 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Bank {
-	
+
+	private String brandName;
+
 	private UserManager um;
 	private AccountManager am;
-	
+
 	private Scanner scan;
 	private Random ran;
-	
+
 	private int log;
-	private int select;
-	
-	// Banking 관련 메소드
-	
-	public Bank() {
-		um = new UserManager();
-		am = new AccountManager();
+
+	public Bank(String brandName) {
+		this.brandName = brandName;
 		this.scan = new Scanner(System.in);
+		this.um = new UserManager();
+		this.am = new AccountManager();
 		this.ran = new Random();
 		this.log = -1;
 	}
-	
-	private void printMenu() {
+
+	private void printMainMenu() {
 		System.out.println("1. 회원가입");
-		System.out.println("2. 로그인");
+		System.out.println("2. 회원탈퇴");
 		System.out.println("3. 계좌신청");
 		System.out.println("4. 계좌철회");
-		System.out.println("5. 로그아웃");
-		System.out.println("6. 회원탈퇴");
+		System.out.println("5. 로그인");
+		System.out.println("6. 로그아웃");
+		System.out.println("0. 종료");
 	}
-	
-	private void selectMenu() {
-		System.out.print("메뉴 : ");
-		select = scan.nextInt();
-	}
-	
-	private void join() {
-		System.out.print("회원가입 ID : ");
-		String joinId = scan.next();
-		System.out.print("회원가입 PW : ");
-		String joinPw = scan.next();
-		
-		if(!isDuplId(joinId)) {
-			System.out.print("이름 : ");
-			String joinName = scan.next();
-			
-			User user = new User(joinId, joinPw, joinName);
-			um.addUser(user);
-			
-			System.out.println("회원가입 완료!");
-		}
-		else {
-			System.out.println("쭝복된 아이디입니다.");
-		}
-	}
-	
-	private boolean isDuplId(String joinId) {
-		boolean dupl = false;
-		for (int i = 0; i < um.getList().size(); i++) {
-			ArrayList<User> user = um.getList();
-			if (user.get(i).getId().equals(joinId)) {
-				dupl = true;
-			}
-		}
-		return dupl;
-	}
-	
-	private void login() {
-		System.out.print("로그인 ID : ");
-		String loginId = scan.next();
-		System.out.print("로그인 PW : ");
-		String loginPw = scan.next();
-		
-		for (int i = 0; i < um.getList().size(); i++) {
-			ArrayList<User> user = um.getList();
-			if (loginId.equals(user.get(i).getId()) && loginPw.equals(user.get(i).getPassword())) {
-				log = i;
-			}
-		}
-		
+
+	private boolean isLoggedIn() {
 		if (log != -1) {
-			System.out.println("로그인 성공!");
+			return true;
 		}
-		else {
-			System.out.println("로그인 실패");
-		}
+		return false;
 	}
-	
-	private void accJoin() {
-		while (true) {
-			int rNum = ran.nextInt(8999) +1000;
-			
-			for (int i = 0; i < am.getList().size(); i++) {
-				if (rNum == Integer.parseInt(am.getList().get(i).getAccNum())) {
-					i--;
-				}
-				else {
-					String account = am.getAccount(log).getAccNum();
-					account S= Integer.toString(rNum);
-					break;
-				}
+
+	private int inputNumber() {
+		int number = -1;
+
+		System.out.print("메뉴 : ");
+		String input = this.scan.next();
+
+		try {
+			number = Integer.parseInt(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return number;
+	}
+
+	private void joinUser() {
+		if (!isLoggedIn()) {
+			System.out.print("회원가입 ID : ");
+			String id = scan.next();
+			System.out.print("회원가입 PW : ");
+			String password = scan.next();
+			System.out.print("이름 : ");
+			String name = scan.next();
+
+			User user = new User(id, password, name);
+			if (this.um.addUser(user) != null) {
+				System.out.println("[회원가입 성공]");
+			} else {
+				System.out.println("[중복된 아이디가 존재합니다.]");
 			}
-		}
-		System.out.println("계좌 개설 성공!");
-		System.out.println("계좌번호는 " + am.getAccount(log).getAccNum() + " 입니다.");
-	}
-	
-	private void accReave() {
-		for (int i = 0; i < 3; i++) {
-			Account aacount = am.getAccount(log).getAccNum(i);
-			System.out.println(i + ". " + account.);
+		} else {
+			System.out.println("[로그인이 되어 있습니다.]");
 		}
 	}
-	
+
+	private void leaveUser() {
+		if (isLoggedIn()) {
+			System.out.println("[탈퇴하시겠습니까? 1.y 2.n]");
+			int leaveNumber = scan.nextInt();
+			if (leaveNumber == 1) {
+				um.deleteUser(log);
+				log = -1;
+				System.out.println("[탈퇴가 완료되었습니다.]");
+			}
+		} else {
+			System.out.println("[로그인이 되어 있지 않습니다.]");
+		}
+	}
+
+	private void createAccount() {
+		System.out.print("id : ");
+		String id = this.scan.next();
+		System.out.print("pw : ");
+		String password = this.scan.next();
+
+		User user = this.um.getUserById(id);
+
+		if (user != null) {
+			if (user.getPassword().equals(password)) {
+				if (user.getAccountSize() < Account.LIMIT) {
+					Account account = this.am.createAccount(new Account(id));
+					this.um.setUser(user, account);
+				} else {
+					System.out.println("[계좌 신청이 초과되었습니다.]");
+				}
+			} else {
+				System.out.println("[비밀번호가 일치하지 않습니다.]");
+			}
+		} else {
+			System.out.println("[회원 정보를 확인하세요.]");
+		}
+	}
+
+	private void deleteAccount() {
+		System.out.print("id : ");
+		String id = this.scan.next();
+		System.out.print("pw : ");
+		String password = this.scan.next();
+
+		User user = this.um.getUserById(id);
+
+		if (user != null) {
+			if (user.getPassword().equals(password)) {
+				for (int i = 0; i < Account.LIMIT; i++) {
+					System.out.printf("%d. %s", i, am.getAccount(i));
+				}
+				System.out.println("[철회할 계좌를 선택해 주세요.]");
+				int deleteNumber = scan.nextInt();
+				am.deleteAccount(deleteNumber);
+				System.out.println("[철회가 완료되었습니다.]");
+			} else {
+				System.out.println("[비밀번호가 일치하지 않습니다.]");
+			}
+		} else {
+			System.out.println("[회원 정보를 확인하세요.]");
+		}
+	}
+
+	private void login() {
+		if (!isLoggedIn()) {
+			if (um.getUserSize() != 0) {
+				System.out.print("id : ");
+				String id = scan.next();
+				System.out.print("pw : ");
+				String password = scan.next();
+
+				for (int i = 0; i < um.getUserSize(); i++) {
+					if (um.getUser(i).getId().equals(id) && um.getUser(i).getPassword().equals(password)) {
+						log = i;
+					}
+				}
+				if (log != -1) {
+					System.out.println("[ " + um.getUser(log).getName() + " 님 환영합니다.]");
+				} else {
+					System.out.println("[회원 정보를 확인하세요.]");
+				}
+			} else {
+				System.out.println("[가입 정보가 없습니다.]");
+			}
+
+		} else {
+			System.out.println("[이미 로그인되어 있습니다.]");
+		}
+	}
+
 	private void logout() {
-		log = -1;
-		System.out.println("로그아웃되었습니다.");
+		if (isLoggedIn()) {
+			this.log = -1;
+			System.out.println("[ " + um.getUser(log).getName() + " 님 로그아웃되었습니다.]");
+		} else {
+			System.out.println("[로그인이 되어 있지 않습니다.]");
+		}
 	}
-	
-	private void reave() {}
-	
+
 	public void run() {
 		while (true) {
-			printMenu();
-			selectMenu();
-			if (select == 1) {
-				join();
-			}
-			else if (select == 2) {
+			printMainMenu();
+			int sel = inputNumber();
+
+			if (sel == 1)
+				joinUser();
+			else if (sel == 2)
+				leaveUser();
+			else if (sel == 3)
+				createAccount();
+			else if (sel == 4)
+				deleteAccount();
+			else if (sel == 5)
 				login();
-			}
-			else if (select == 3) {
-				accJoin();
-			}
-			else if (select == 4) {
-				accReave();
-			}
-			else if (select == 5) {
+			else if (sel == 6)
 				logout();
-			}
-			else if (select == 6) {
-				leave();
-			}
+			else if (sel == 0)
+				break;
 		}
+		System.out.println("[시스템이 종료되었습니다.]");
 	}
-	
+
 }
