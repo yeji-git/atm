@@ -48,7 +48,7 @@ public class User {
 	}
 
 	public ArrayList<Account> getAccountList() {
-		return (ArrayList<Account>) this.accs.clone();
+		return (ArrayList<Account>) this.accs.clone(); 
 	}
 
 }

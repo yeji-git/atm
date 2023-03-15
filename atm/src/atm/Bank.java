@@ -1,7 +1,5 @@
 package atm;
 
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Bank {
@@ -12,8 +10,6 @@ public class Bank {
 	private AccountManager am;
 
 	private Scanner scan;
-	private Random ran;
-
 	private int log;
 
 	public Bank(String brandName) {
@@ -21,19 +17,31 @@ public class Bank {
 		this.scan = new Scanner(System.in);
 		this.um = new UserManager();
 		this.am = new AccountManager();
-		this.ran = new Random();
 		this.log = -1;
 	}
 
 	private void printMainMenu() {
+		System.out.println("--- " + this.brandName + " ---");
 		System.out.println("1. 회원가입");
 		System.out.println("2. 회원탈퇴");
 		System.out.println("3. 계좌신청");
 		System.out.println("4. 계좌철회");
 		System.out.println("5. 로그인");
 		System.out.println("6. 로그아웃");
+		System.out.println("7. 뱅킹");
 		System.out.println("0. 종료");
+		System.out.println("-----------------");
 	}
+	
+	private void printSubMenu() {
+		System.out.println("1. 입금하기");
+		System.out.println("2. 출금하기");
+		System.out.println("3. 조회하기");
+		System.out.println("4. 이체하기");
+		System.out.println("5. 뒤로가기");
+	}
+	
+	
 
 	private boolean isLoggedIn() {
 		if (log != -1) {
@@ -105,7 +113,7 @@ public class Bank {
 					Account account = this.am.createAccount(new Account(id));
 					this.um.setUser(user, account);
 				} else {
-					System.out.println("[계좌 신청이 초과되었습니다.]");
+					System.out.println("[계좌가 초과되었습니다.]");
 				}
 			} else {
 				System.out.println("[비밀번호가 일치하지 않습니다.]");
@@ -125,8 +133,8 @@ public class Bank {
 
 		if (user != null) {
 			if (user.getPassword().equals(password)) {
-				for (int i = 0; i < Account.LIMIT; i++) {
-					System.out.printf("%d. %s", i, am.getAccount(i));
+				for (int i = 0; i < user.getAccountSize(); i++) {
+					System.out.printf("%d. %s\n", i, am.getAccount(i).getAccNum());
 				}
 				System.out.println("[철회할 계좌를 선택해 주세요.]");
 				int deleteNumber = scan.nextInt();
@@ -148,13 +156,13 @@ public class Bank {
 				System.out.print("pw : ");
 				String password = scan.next();
 
-				for (int i = 0; i < um.getUserSize(); i++) {
-					if (um.getUser(i).getId().equals(id) && um.getUser(i).getPassword().equals(password)) {
+				for (int i = 0; i < this.um.getUserSize(); i++) {
+					if (this.um.getUser(i).getId().equals(id) && this.um.getUser(i).getPassword().equals(password)) {
 						log = i;
 					}
 				}
-				if (log != -1) {
-					System.out.println("[ " + um.getUser(log).getName() + " 님 환영합니다.]");
+				if (this.log != -1) {
+					System.out.println("[ " + this.um.getUser(this.log).getName() + " 님 환영합니다.]");
 				} else {
 					System.out.println("[회원 정보를 확인하세요.]");
 				}
@@ -193,6 +201,8 @@ public class Bank {
 				login();
 			else if (sel == 6)
 				logout();
+			else if (sel == 7)
+				printSubMenu();
 			else if (sel == 0)
 				break;
 		}

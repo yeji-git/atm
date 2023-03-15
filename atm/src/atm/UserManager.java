@@ -21,7 +21,7 @@ public class UserManager {
 	public User getUser(int index) {
 		User user = list.get(index);
 
-		User reqObj = new User(user.getId(), user.getPassword(), user.getName());
+		User reqObj = new User(user.getId(), user.getPassword(), user.getName(), user.getAccountList());
 		return reqObj;
 	}
 
