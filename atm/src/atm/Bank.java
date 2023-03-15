@@ -3,7 +3,7 @@ package atm;
 import java.util.Scanner;
 
 public class Bank {
-	
+
 	private String brandName;
 
 	private UserManager um;
@@ -31,6 +31,81 @@ public class Bank {
 		System.out.println("7. 뱅킹");
 		System.out.println("0. 종료");
 		System.out.println("-----------------");
+	}
+
+	public void banking() {
+		if (isLoggedIn()) {
+			while (true) {
+				printSubMenu();
+				int sel = inputNumber();
+
+				if (sel == 1)
+					bankDeposit();
+				else if (sel == 2)
+					bankWithdraw();
+				else if (sel == 3)
+					bankInformation();
+				else if (sel == 4)
+					bankTransfer();
+				else if (sel == 5)
+					break;
+			}
+		} else {
+			System.out.println("[로그인이 되어 있지 않습니다.]");
+		}
+	}
+
+	private void bankDeposit() {
+		System.out.println("--- 입금 ---");
+		User user = this.um.getUser(log);
+		for (int i = 0; i < user.getAccountSize(); i++) {
+			System.out.printf("[%d. %s]\n", i, am.getAccount(i).getAccNum());
+		}
+		System.out.println("[입금하실 계좌를 선택해 주세요.]");
+		int depositAcc = scan.nextInt();
+
+		System.out.println("[입금하실 금액을 입력해 주세요.]");
+		int depositMoney = scan.nextInt();
+
+		if (depositMoney > 0) {
+			if (user.getAccountSize() != 0) {
+				Account account = this.am.getAccount(depositAcc);
+				account.setMoney(depositMoney);
+				System.out.println("[입금되었습니다.]");
+			} else {
+				System.out.println("[계좌를 먼저 생성해 주세요.]");
+			}
+		} else {
+			System.out.println("[금액을 확인해 주세요.]");
+		}
+	}
+
+	private void bankWithdraw() {
+		System.out.println("--- 출금 ---");
+		User user = this.um.getUser(log);
+		for (int i = 0; i < user.getAccountSize(); i++) {
+			System.out.printf("[%d. %s]\n", i, am.getAccount(i).getAccNum());
+		}
+		System.out.println("[출금하실 계좌를 선택해 주세요.]");
+		int withdrawAcc = scan.nextInt();
+		
+		System.out.println("[출금하실 금액을 입력해 주세요.]");
+		int withdrawMoney = scan.nextInt();
+		
+		if (withdrawMoney > 0 && withdrawMoney <= am.getAccount(withdrawAcc).getMoney()) {
+			Account account = this.am.getAccount(withdrawAcc);
+			account.setMoney(-withdrawMoney);
+			System.out.println("[출금되었습니다.]");
+		} else {
+			System.out.println("[잔액이 부족합니다.]");
+		}
+	}
+
+	private void bankInformation() {
+		System.out.println("--- 조회 ---");
+	}
+
+	private void bankTransfer() {
 	}
 
 	private void printSubMenu() {
@@ -64,6 +139,7 @@ public class Bank {
 	}
 
 	private void joinUser() {
+		System.out.println("--- 회원가입 ---");
 		if (!isLoggedIn()) {
 			System.out.print("회원가입 ID : ");
 			String id = scan.next();
@@ -74,7 +150,7 @@ public class Bank {
 
 			User user = new User(id, password, name);
 			if (this.um.addUser(user) != null) {
-				System.out.println("[회원가입이 되었습니다.]");
+				System.out.println("[회원가입 되었습니다.]");
 			} else {
 				System.out.println("[중복된 아이디가 존재합니다.]");
 			}
@@ -84,6 +160,7 @@ public class Bank {
 	}
 
 	private void leaveUser() {
+		System.out.println("--- 회원탈퇴 ---");
 		if (isLoggedIn()) {
 			System.out.println("[탈퇴하시겠습니까? 1.y 2.n]");
 			int leaveNumber = scan.nextInt();
@@ -98,60 +175,47 @@ public class Bank {
 	}
 
 	private void createAccount() {
-		System.out.print("id : ");
-		String id = this.scan.next();
-		System.out.print("pw : ");
-		String password = this.scan.next();
-
-		User user = this.um.getUserById(id);
-
-		if (user != null) {
-			if (user.getPassword().equals(password)) {
-				if (user.getAccountSize() < Account.LIMIT) {
-					Account account = this.am.createAccount(new Account(id));
-					this.um.setUser(user, account, Account.ADD);
-					System.out.println("[계좌 생성이 완료되었습니다.]");
-				} else {
-					System.out.println("[계좌 갯수가 초과되었습니다.]");
-				}
+		System.out.println("--- 계좌신청 ---");
+		if (isLoggedIn()) {
+			User user = this.um.getUser(log);
+	
+			if (user.getAccountSize() < Account.LIMIT) {
+				String id = user.getId();
+				Account account = this.am.createAccount(new Account(id));
+				this.um.setUser(user, account, Account.ADD);
+				System.out.println("[계좌 생성이 완료되었습니다.]");
 			} else {
-				System.out.println("[비밀번호가 일치하지 않습니다.]");
+				System.out.println("[계좌 갯수가 초과되었습니다.]");
 			}
-		} else {
-			System.out.println("[회원 정보를 확인하세요.]");
+		}
+		else {
+			System.out.println("[로그인이 되어 있지 않습니다.]");
 		}
 	}
 
 	private void deleteAccount() {
-		System.out.print("id : ");
-		String id = this.scan.next();
-		System.out.print("pw : ");
-		String password = this.scan.next();
-
-		User user = this.um.getUserById(id);
-
-		if (user != null) {
-			if (user.getPassword().equals(password)) {
-				for (int i = 0; i < user.getAccountSize(); i++) {
-					System.out.printf("%d. %s\n", i, am.getAccount(i).getAccNum());
-				}
-				System.out.println("[철회할 계좌를 선택해 주세요.]");
-				int deleteNumber = scan.nextInt();
-				am.deleteAccount(deleteNumber);
-				Account delAcc = user.getAccount(deleteNumber);
-				this.um.setUser(user, delAcc, Account.DELETE);
-				System.out.println("[철회가 완료되었습니다.]");
-			} else {
-				System.out.println("[비밀번호가 일치하지 않습니다.]");
+		System.out.println("--- 계좌철회 ---");
+		if (isLoggedIn()) {
+			User user = this.um.getUser(log);
+	
+			for (int i = 0; i < user.getAccountSize(); i++) {
+				System.out.printf("[%d. %s]\n", i, this.am.getAccount(i).getAccNum());
 			}
+			System.out.println("[철회할 계좌를 선택해 주세요.]");
+			int deleteNumber = scan.nextInt();
+			this.am.deleteAccount(deleteNumber);
+			Account delAcc = user.getAccount(deleteNumber);
+			this.um.setUser(user, delAcc, Account.DELETE);
+			System.out.println("[철회가 완료되었습니다.]");
 		} else {
-			System.out.println("[회원 정보를 확인하세요.]");
+			System.out.println("[로그인이 되어 있지 않습니다.]");
 		}
 	}
 
 	private void login() {
+		System.out.println("--- 로그인 ---");
 		if (!isLoggedIn()) {
-			if (um.getUserSize() != 0) {
+			if (this.um.getUserSize() != 0) {
 				System.out.print("id : ");
 				String id = scan.next();
 				System.out.print("pw : ");
@@ -159,7 +223,7 @@ public class Bank {
 
 				for (int i = 0; i < this.um.getUserSize(); i++) {
 					if (this.um.getUser(i).getId().equals(id) && this.um.getUser(i).getPassword().equals(password)) {
-						log = i;
+						this.log = i;
 					}
 				}
 				if (this.log != -1) {
@@ -177,9 +241,10 @@ public class Bank {
 	}
 
 	private void logout() {
+		System.out.println("--- 로그아웃 ---");
 		if (isLoggedIn()) {
 			this.log = -1;
-			System.out.println("[ " + um.getUser(log).getName() + " 님 로그아웃되었습니다.]");
+			System.out.println("[ " + this.um.getUser(log).getName() + " 님 로그아웃되었습니다.]");
 		} else {
 			System.out.println("[로그인이 되어 있지 않습니다.]");
 		}
@@ -203,7 +268,7 @@ public class Bank {
 			else if (sel == 6)
 				logout();
 			else if (sel == 7)
-				printSubMenu();
+				banking();
 			else if (sel == 0)
 				break;
 		}

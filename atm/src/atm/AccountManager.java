@@ -39,7 +39,7 @@ public class AccountManager {
 	public void setAccount(int index, Account account) {
 		list.set(index, account);
 	}
-
+	
 	// Delete
 	public void deleteAccount(int index) {
 		list.remove(index);
